@@ -1,1 +1,1 @@
-# sdxl-artist-studies
+# parrotzone studies archive 🦜
