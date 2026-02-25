@@ -13,7 +13,7 @@
   var COMPLETABLE = [
     'help', 'about', 'projects', 'links', 'whoami', 'date',
     'neofetch', 'history', 'clear', 'parrotzone', 'parrotcross', 'adventure',
-    'echo', 'ls', 'cat', 'pwd', 'sudo', 'rm', 'exit', 'ping', 'vim', 'cd'
+    'quiz', 'echo', 'ls', 'cat', 'pwd', 'sudo', 'rm', 'exit', 'ping', 'vim', 'cd'
   ];
 
   var BANNER = [
@@ -115,7 +115,8 @@
       ['history',    'Command history'],
       ['clear',      'Clear terminal'],
       ['parrotcross', 'Play a game'],
-      ['adventure',   'Text adventure']
+      ['adventure',   'Text adventure'],
+      ['quiz',        'Which galaxy are you?']
     ];
     blank();
     print('<span class="c-head">  Available Commands</span>');
@@ -882,6 +883,511 @@
 
     document.addEventListener('keydown', onKey);
     showScene('start');
+  }
+
+  /* ── Galaxy quiz ───────────────────────────── */
+
+  var quizQuestions = [
+    {
+      q: "It's Saturday night. You're...",
+      opts: [
+        { text: 'At the beach watching the sunset', pts: ['tadpole'] },
+        { text: 'Hosting people at your place', pts: ['cartwheel', 'whirlpool'] },
+        { text: 'Deep in a side project', pts: ['cigar', 'antennae'] },
+        { text: 'Rewatching a film nobody else likes', pts: ['blackeye', 'sombrero'] }
+      ]
+    },
+    {
+      q: 'Pick an element.',
+      opts: [
+        { text: 'Water', pts: ['tadpole', 'whirlpool'] },
+        { text: 'Fire', pts: ['cigar', 'cartwheel'] },
+        { text: 'Air', pts: ['andromeda', 'triangulum'] },
+        { text: 'Earth', pts: ['milkyway', 'sunflower'] }
+      ]
+    },
+    {
+      q: 'Your friends would say you\'re...',
+      opts: [
+        { text: 'The chill one', pts: ['tadpole', 'sombrero'] },
+        { text: 'The one with big ideas', pts: ['andromeda', 'cigar'] },
+        { text: 'The one who shows up for everyone', pts: ['milkyway', 'sunflower'] },
+        { text: 'The wildcard', pts: ['cartwheel', 'triangulum'] }
+      ]
+    },
+    {
+      q: 'Ideal workspace?',
+      opts: [
+        { text: 'A hammock', pts: ['tadpole', 'sombrero'] },
+        { text: 'Clean desk, everything labeled', pts: ['andromeda', 'antennae'] },
+        { text: 'Controlled chaos, sticky notes everywhere', pts: ['whirlpool', 'blackeye'] },
+        { text: 'Wherever there\'s people', pts: ['cartwheel', 'sunflower'] }
+      ]
+    },
+    {
+      q: 'You get an unexpected day off. You...',
+      opts: [
+        { text: 'Sleep in, no plans', pts: ['sombrero', 'tadpole'] },
+        { text: 'Start something new', pts: ['cigar', 'whirlpool'] },
+        { text: 'Call everyone, make plans', pts: ['cartwheel', 'sunflower'] },
+        { text: 'Finally finish that thing you\'ve been putting off', pts: ['triangulum', 'milkyway'] }
+      ]
+    },
+    {
+      q: 'Pick a vibe.',
+      opts: [
+        { text: 'Quiet intensity', pts: ['blackeye', 'andromeda'] },
+        { text: 'Warm chaos', pts: ['whirlpool', 'cartwheel'] },
+        { text: 'Cool confidence', pts: ['sombrero', 'cigar'] },
+        { text: 'Gentle persistence', pts: ['triangulum', 'sunflower'] }
+      ]
+    },
+    {
+      q: 'What drives you?',
+      opts: [
+        { text: 'Curiosity', pts: ['antennae', 'andromeda'] },
+        { text: 'Freedom', pts: ['tadpole', 'whirlpool'] },
+        { text: 'Making people happy', pts: ['milkyway', 'sunflower'] },
+        { text: 'Proving yourself', pts: ['triangulum', 'cigar'] }
+      ]
+    },
+    {
+      q: 'How do you recharge?',
+      opts: [
+        { text: 'Alone, somewhere quiet', pts: ['blackeye', 'sombrero'] },
+        { text: 'With one or two close people', pts: ['tadpole', 'triangulum'] },
+        { text: 'In a crowd', pts: ['cartwheel', 'whirlpool'] },
+        { text: 'By making something', pts: ['cigar', 'antennae'] }
+      ]
+    },
+    {
+      q: 'Your biggest flaw?',
+      opts: [
+        { text: 'Too go-with-the-flow', pts: ['tadpole', 'sombrero'] },
+        { text: 'Overthinking everything', pts: ['andromeda', 'antennae'] },
+        { text: 'Taking on too much at once', pts: ['cigar', 'whirlpool'] },
+        { text: 'Saying yes to everyone', pts: ['milkyway', 'sunflower'] }
+      ]
+    },
+    {
+      q: 'Pick a time of day.',
+      opts: [
+        { text: 'Sunrise', pts: ['sunflower', 'milkyway'] },
+        { text: 'Golden hour', pts: ['sombrero', 'tadpole'] },
+        { text: 'Midnight', pts: ['blackeye', 'antennae'] },
+        { text: '3 AM', pts: ['cigar', 'triangulum'] }
+      ]
+    },
+    {
+      q: 'Someone disagrees with you. You...',
+      opts: [
+        { text: 'Hear them out, probably compromise', pts: ['tadpole', 'milkyway'] },
+        { text: 'Present your case logically', pts: ['andromeda', 'antennae'] },
+        { text: 'Get passionate, talk it through', pts: ['whirlpool', 'cartwheel'] },
+        { text: 'Shrug and move on', pts: ['sombrero', 'blackeye'] }
+      ]
+    },
+    {
+      q: 'Your relationship with the spotlight?',
+      opts: [
+        { text: 'I avoid it', pts: ['triangulum', 'blackeye'] },
+        { text: 'It finds me naturally', pts: ['whirlpool', 'sombrero'] },
+        { text: 'I seek it out', pts: ['cartwheel', 'cigar'] },
+        { text: 'I\'m fine either way', pts: ['milkyway', 'andromeda'] }
+      ]
+    },
+    {
+      q: 'You\'re going through a tough time. You...',
+      opts: [
+        { text: 'Go for a long walk, process it alone', pts: ['tadpole', 'blackeye'] },
+        { text: 'Talk it through with people you trust', pts: ['milkyway', 'triangulum'] },
+        { text: 'Stay positive, it\'ll work out', pts: ['sunflower', 'cartwheel'] },
+        { text: 'Channel it into work', pts: ['cigar', 'antennae'] }
+      ]
+    },
+    {
+      q: 'Pick a movie genre.',
+      opts: [
+        { text: 'Sci-fi', pts: ['antennae', 'andromeda'] },
+        { text: 'Art house / indie', pts: ['blackeye', 'sombrero'] },
+        { text: 'Comedy', pts: ['sunflower', 'cartwheel'] },
+        { text: 'Documentary', pts: ['triangulum', 'milkyway'] }
+      ]
+    },
+    {
+      q: 'Pick a season.',
+      opts: [
+        { text: 'Summer', pts: ['cartwheel', 'sunflower'] },
+        { text: 'Autumn', pts: ['sombrero', 'blackeye'] },
+        { text: 'Winter', pts: ['andromeda', 'triangulum'] },
+        { text: 'Spring', pts: ['tadpole', 'whirlpool'] }
+      ]
+    }
+  ];
+
+  var quizResults = {
+    tadpole: {
+      name: 'Tadpole Galaxy',
+      lines: [
+        '<span class="c-head">  You are the Tadpole Galaxy</span>',
+        '<span class="c-sep">  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500</span>',
+        '',
+        '  <span class="ascii-l2">           ·  *  ·</span>',
+        '  <span class="ascii-l3">        · * ·██· * · ·  ·  ·</span>',
+        '  <span class="ascii-l5">        · * ·██· *  · · · · ·</span>',
+        '  <span class="ascii-l3">           ·  *      · · · ·</span>',
+        '  <span class="ascii-l2">                       · ·</span>',
+        '',
+        '  <span class="c-val">The Sensitive Surfer.</span>',
+        '',
+        '  You go with the flow, riding life\'s currents',
+        '  with grace. You don\'t fight the tide \u2014 you',
+        '  become it. People underestimate your depth.',
+        '',
+        '  <span class="c-dim">Fun fact: The Tadpole Galaxy has a tail of</span>',
+        '  <span class="c-dim">stars 280,000 light-years long.</span>'
+      ]
+    },
+    andromeda: {
+      name: 'Andromeda Galaxy',
+      lines: [
+        '<span class="c-head">  You are the Andromeda Galaxy</span>',
+        '<span class="c-sep">  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500</span>',
+        '',
+        '  <span class="ascii-l2">          ·    · ·    ·</span>',
+        '  <span class="ascii-l3">        ·   · * * ·   ·</span>',
+        '  <span class="ascii-l5">       · * ·   ██   · * ·</span>',
+        '  <span class="ascii-l3">        ·   · * * ·   ·</span>',
+        '  <span class="ascii-l2">          ·    · ·    ·</span>',
+        '',
+        '  <span class="c-val">The Rational Idealist.</span>',
+        '',
+        '  You see the world as it could be, and you have',
+        '  a plan to get there. Cool-headed, principled,',
+        '  and quietly powerful.',
+        '',
+        '  <span class="c-dim">Fun fact: Andromeda is heading toward us at</span>',
+        '  <span class="c-dim">110 km/s. It knows what it wants.</span>'
+      ]
+    },
+    milkyway: {
+      name: 'Milky Way',
+      lines: [
+        '<span class="c-head">  You are the Milky Way</span>',
+        '<span class="c-sep">  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500</span>',
+        '',
+        '  <span class="ascii-l2">                  ·</span>',
+        '  <span class="ascii-l3">               · ▓█▓ ·</span>',
+        '  <span class="ascii-l5">   · · · · · · ░▓████▓░ · · · · · ·</span>',
+        '  <span class="ascii-l3">               · ▓█▓ ·</span>',
+        '  <span class="ascii-l2">                  ·</span>',
+        '',
+        '  <span class="c-val">The Normie With Depth.</span>',
+        '',
+        '  You seem ordinary on the surface, but there\'s',
+        '  a supermassive black hole of complexity',
+        '  underneath. Complicated past, heart of gold.',
+        '',
+        '  <span class="c-dim">Fun fact: You\'re literally inside this one</span>',
+        '  <span class="c-dim">right now. How\'s that for complicated?</span>'
+      ]
+    },
+    cartwheel: {
+      name: 'Cartwheel Galaxy',
+      lines: [
+        '<span class="c-head">  You are the Cartwheel Galaxy</span>',
+        '<span class="c-sep">  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500</span>',
+        '',
+        '  <span class="ascii-l2">           · * * * ·</span>',
+        '  <span class="ascii-l3">         *    · ·    *</span>',
+        '  <span class="ascii-l5">        *   · · · ·   *</span>',
+        '  <span class="ascii-l3">         *    · ·    *</span>',
+        '  <span class="ascii-l2">           · * * * ·</span>',
+        '',
+        '  <span class="c-val">The Extrovert Party Person.</span>',
+        '',
+        '  Life is a party and you\'re the host. Your',
+        '  energy transforms every room. You\'ve been',
+        '  through collisions and came out more beautiful.',
+        '',
+        '  <span class="c-dim">Fun fact: Shaped by a galaxy punching straight</span>',
+        '  <span class="c-dim">through its center. Still looks fabulous.</span>'
+      ]
+    },
+    sombrero: {
+      name: 'Sombrero Galaxy',
+      lines: [
+        '<span class="c-head">  You are the Sombrero Galaxy</span>',
+        '<span class="c-sep">  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500</span>',
+        '',
+        '  <span class="ascii-l2">             · · ·</span>',
+        '  <span class="ascii-l3">          ·  ░▓██▓░  ·</span>',
+        '  <span class="ascii-l5">        ═══════════════════</span>',
+        '  <span class="ascii-l3">          ·  ░▓██▓░  ·</span>',
+        '  <span class="ascii-l2">             · · ·</span>',
+        '',
+        '  <span class="c-val">The Effortlessly Cool One.</span>',
+        '',
+        '  Mysterious, stylish, slightly unknowable.',
+        '  You don\'t try to be interesting \u2014 you just are.',
+        '  The hat stays on.',
+        '',
+        '  <span class="c-dim">Fun fact: Its dust lane makes it look like it\'s</span>',
+        '  <span class="c-dim">wearing a hat. Peak fashion, 28 million ly away.</span>'
+      ]
+    },
+    blackeye: {
+      name: 'Black Eye Galaxy',
+      lines: [
+        '<span class="c-head">  You are the Black Eye Galaxy</span>',
+        '<span class="c-sep">  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500</span>',
+        '',
+        '  <span class="ascii-l2">          · · * * · ·</span>',
+        '  <span class="ascii-l3">        · ████████████ ·</span>',
+        '  <span class="ascii-l5">       · · ·  ·██·  · · ·</span>',
+        '  <span class="ascii-l3">        · · * * * * · ·</span>',
+        '  <span class="ascii-l2">          · ·  · ·  · ·</span>',
+        '',
+        '  <span class="c-val">The Brooding Creative.</span>',
+        '',
+        '  Hidden depths, quiet intensity. Your best work',
+        '  comes from the shadows. There\'s more to you',
+        '  than meets the eye.',
+        '',
+        '  <span class="c-dim">Fun fact: Its inner and outer discs rotate in</span>',
+        '  <span class="c-dim">opposite directions. Contradiction is your brand.</span>'
+      ]
+    },
+    whirlpool: {
+      name: 'Whirlpool Galaxy',
+      lines: [
+        '<span class="c-head">  You are the Whirlpool Galaxy</span>',
+        '<span class="c-sep">  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500</span>',
+        '',
+        '  <span class="ascii-l2">          · · * · ·</span>',
+        '  <span class="ascii-l3">        · *       · ·    ·</span>',
+        '  <span class="ascii-l5">       · ·    ██    · *  ●</span>',
+        '  <span class="ascii-l3">        · ·       * ·</span>',
+        '  <span class="ascii-l2">          · · * · ·</span>',
+        '',
+        '  <span class="c-val">The Chaotic Creative.</span>',
+        '',
+        '  You pull people into your orbit with magnetic',
+        '  energy. Your life is beautiful chaos and',
+        '  everyone wants in.',
+        '',
+        '  <span class="c-dim">Fun fact: First galaxy where spiral structure</span>',
+        '  <span class="c-dim">was observed. A trendsetter, naturally.</span>'
+      ]
+    },
+    sunflower: {
+      name: 'Sunflower Galaxy',
+      lines: [
+        '<span class="c-head">  You are the Sunflower Galaxy</span>',
+        '<span class="c-sep">  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500</span>',
+        '',
+        '  <span class="ascii-l2">        · *  · *  · *  ·</span>',
+        '  <span class="ascii-l3">       ·  * · · · · *  ·</span>',
+        '  <span class="ascii-l5">        · · ·  ██  · · ·</span>',
+        '  <span class="ascii-l3">       ·  * · · · · *  ·</span>',
+        '  <span class="ascii-l2">        · *  · *  · *  ·</span>',
+        '',
+        '  <span class="c-val">The Eternal Optimist.</span>',
+        '',
+        '  You radiate warmth wherever you go. You\'re',
+        '  everyone\'s favorite person and you don\'t',
+        '  even realize it.',
+        '',
+        '  <span class="c-dim">Fun fact: One of the brightest spirals in the</span>',
+        '  <span class="c-dim">sky. Hard not to shine when it\'s in your nature.</span>'
+      ]
+    },
+    cigar: {
+      name: 'Cigar Galaxy',
+      lines: [
+        '<span class="c-head">  You are the Cigar Galaxy</span>',
+        '<span class="c-sep">  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500</span>',
+        '',
+        '  <span class="ascii-l2">              · | ·</span>',
+        '  <span class="ascii-l3">       ░▒▓████████████▓▒░</span>',
+        '  <span class="ascii-l5">        ▒▓██████████████▓▒</span>',
+        '  <span class="ascii-l3">       ░▒▓████████████▓▒░</span>',
+        '  <span class="ascii-l2">              · | ·</span>',
+        '',
+        '  <span class="c-val">The Hustler.</span>',
+        '',
+        '  Restless energy, always building something.',
+        '  You burn bright and fast. Sleep is for galaxies',
+        '  that aren\'t going somewhere.',
+        '',
+        '  <span class="c-dim">Fun fact: Producing new stars 10x faster than</span>',
+        '  <span class="c-dim">the Milky Way. No chill, all grind.</span>'
+      ]
+    },
+    antennae: {
+      name: 'Antennae Galaxy',
+      lines: [
+        '<span class="c-head">  You are the Antennae Galaxy</span>',
+        '<span class="c-sep">  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500</span>',
+        '',
+        '  <span class="ascii-l2">      ·                    ·</span>',
+        '  <span class="ascii-l3">       · ·   ·██··██·    · ·</span>',
+        '  <span class="ascii-l5">             · ████████ ·</span>',
+        '  <span class="ascii-l3">       · ·    ·██··██·   · ·</span>',
+        '  <span class="ascii-l2">      ·                    ·</span>',
+        '',
+        '  <span class="c-val">The Tech Type.</span>',
+        '',
+        '  Two brains in one, always tinkering. You see',
+        '  systems where others see chaos. Building the',
+        '  future, one commit at a time.',
+        '',
+        '  <span class="c-dim">Fun fact: Two galaxies merging into one. The</span>',
+        '  <span class="c-dim">ultimate collab project.</span>'
+      ]
+    },
+    triangulum: {
+      name: 'Triangulum Galaxy',
+      lines: [
+        '<span class="c-head">  You are the Triangulum Galaxy</span>',
+        '<span class="c-sep">  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500</span>',
+        '',
+        '  <span class="ascii-l2">            ·       ·</span>',
+        '  <span class="ascii-l3">         · · * · * · ·</span>',
+        '  <span class="ascii-l5">        · * · · ██ · · * ·</span>',
+        '  <span class="ascii-l3">         · · * · * · ·</span>',
+        '  <span class="ascii-l2">            ·       ·</span>',
+        '',
+        '  <span class="c-val">The Underdog.</span>',
+        '',
+        '  Third-largest in the local group but who\'s',
+        '  counting? Always overlooked, quietly full of',
+        '  potential. Your time is coming.',
+        '',
+        '  <span class="c-dim">Fun fact: Contains 40 billion stars but gets</span>',
+        '  <span class="c-dim">zero press. Relatable.</span>'
+      ]
+    }
+  };
+
+  cmds.quiz = function () {
+    print('<span class="c-ok">Loading quiz...</span>');
+    setTimeout(startQuiz, 400);
+  };
+
+  function startQuiz() {
+    var scores = {};
+    var qIndex = 0;
+
+    inputLine.classList.add('hidden');
+    commandInput.blur();
+    output.innerHTML = '';
+
+    function addPoints(galaxyList) {
+      for (var i = 0; i < galaxyList.length; i++) {
+        var g = galaxyList[i];
+        scores[g] = (scores[g] || 0) + 1;
+      }
+    }
+
+    function showQuestion() {
+      output.innerHTML = '';
+      var q = quizQuestions[qIndex];
+
+      var lines = [
+        '<span class="c-head"> WHICH GALAXY ARE YOU?</span>',
+        '<span class="c-dim"> Question ' + (qIndex + 1) + '/' + quizQuestions.length + '</span>',
+        '', ''
+      ];
+      lines.push(' ' + q.q);
+      lines.push('');
+
+      for (var i = 0; i < q.opts.length; i++) {
+        lines.push('  <span class="c-label">[' + (i + 1) + ']</span> ' + q.opts[i].text);
+      }
+
+      for (var j = 0; j < lines.length; j++) {
+        var el = document.createElement('div');
+        el.className = 'line';
+        el.innerHTML = lines[j] || '&nbsp;';
+        output.appendChild(el);
+      }
+      scrollBottom();
+    }
+
+    function showResult() {
+      output.innerHTML = '';
+      var best = null;
+      var bestScore = 0;
+      var keys = Object.keys(scores);
+      for (var i = 0; i < keys.length; i++) {
+        if (scores[keys[i]] > bestScore) {
+          bestScore = scores[keys[i]];
+          best = keys[i];
+        }
+      }
+
+      if (!best) best = 'milkyway';
+      var result = quizResults[best];
+      var lines = [
+        '',
+        '<span class="c-head"> WHICH GALAXY ARE YOU?</span>',
+        ''
+      ];
+      lines = lines.concat(result.lines);
+      lines.push('');
+      lines.push('  <span class="c-label">[1]</span> Play again');
+      lines.push('  <span class="c-label">[2]</span> Exit');
+
+      for (var j = 0; j < lines.length; j++) {
+        var el = document.createElement('div');
+        el.className = 'line';
+        el.innerHTML = lines[j] || '&nbsp;';
+        output.appendChild(el);
+      }
+      scrollBottom();
+    }
+
+    function onKey(e) {
+      var num = parseInt(e.key);
+      if (qIndex < quizQuestions.length) {
+        var q = quizQuestions[qIndex];
+        if (num >= 1 && num <= q.opts.length) {
+          e.preventDefault();
+          addPoints(q.opts[num - 1].pts);
+          qIndex++;
+          if (qIndex >= quizQuestions.length) {
+            showResult();
+          } else {
+            showQuestion();
+          }
+        }
+      } else {
+        if (num === 1) {
+          e.preventDefault();
+          scores = {};
+          qIndex = 0;
+          showQuestion();
+        } else if (num === 2) {
+          e.preventDefault();
+          quit();
+        }
+      }
+      if (e.key === 'q' || e.key === 'Q' || e.key === 'Escape') {
+        e.preventDefault();
+        quit();
+      }
+    }
+
+    function quit() {
+      document.removeEventListener('keydown', onKey);
+      output.innerHTML = '';
+      inputLine.classList.remove('hidden');
+      focus();
+    }
+
+    document.addEventListener('keydown', onKey);
+    showQuestion();
   }
 
   /* ── Execute ──────────────────────────────── */
