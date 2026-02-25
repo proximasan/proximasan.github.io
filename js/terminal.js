@@ -173,7 +173,7 @@
     print('  <span class="c-label">github      </span> <span class="c-dim">\u2192</span> <a class="c-link" href="https://github.com/proximasan" target="_blank">github.com/proximasan</a>');
     print('  <span class="c-label">huggingface </span> <span class="c-dim">\u2192</span> <a class="c-link" href="https://huggingface.co/proxima" target="_blank">huggingface.co/proxima</a>');
     print('  <span class="c-label">substack    </span> <span class="c-dim">\u2192</span> <a class="c-link" href="https://substack.com/@proximasan" target="_blank">substack.com/@proximasan</a>');
-    print('  <span class="c-label">discord     </span> <span class="c-dim">\u2192</span> <a class="c-link" href="https://discord.gg/b2TCh6jjXx" target="_blank">discord.gg/b2TCh6jjXx</a>');
+    print('  <span class="c-label">discord     </span> <span class="c-dim">\u2192</span> <a class="c-link" href="https://discord.com/users/402256924852355073" target="_blank">profile</a> <span class="c-dim">\u2502</span> <a class="c-link" href="https://discord.gg/b2TCh6jjXx" target="_blank">server</a>');
     print('  <span class="c-label">ko-fi       </span> <span class="c-dim">\u2192</span> <a class="c-link" href="https://ko-fi.com/proximasan" target="_blank">ko-fi.com/proximasan</a>');
     blank();
     print('  <span class="c-dim">  socials</span>');
