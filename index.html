@@ -2,42 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- Add this line -->
-  <title>parrotzone</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>proximasan</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
-
 <body>
-  <div class="center-ascii">
-    <pre class="ascii-art-prox">
-<span class="prox-1">██████  ██████   ██████  ██   ██ ██ ███    ███  █████  ███████  █████  ███    ██</span>
-<span class="prox-2">██   ██ ██   ██ ██    ██  ██ ██  ██ ████  ████ ██   ██ ██      ██   ██ ████   ██</span>
-<span class="prox-3">██████  ██████  ██    ██   ███   ██ ██ ████ ██ ███████ ███████ ███████ ██ ██  ██</span>
-<span class="prox-4">██      ██   ██ ██    ██  ██ ██  ██ ██  ██  ██ ██   ██      ██ ██   ██ ██  ██ ██</span>
-<span class="prox-5">██      ██   ██  ██████  ██   ██ ██ ██      ██ ██   ██ ███████ ██   ██ ██   ████</span>
-    </pre>
+  <div class="terminal-container">
+    <div class="terminal-header">
+      <div class="traffic-lights">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-yellow"></span>
+        <span class="dot dot-green"></span>
+      </div>
+      <span class="terminal-title">guest@proximasan &mdash; zsh</span>
+    </div>
+    <div class="terminal-body" id="terminal">
+      <div id="output"></div>
+      <div class="input-line hidden" id="input-line">
+        <span class="prompt"><span class="prompt-user">guest@proxima</span> <span class="prompt-path">~</span> <span class="prompt-symbol">$</span></span>
+        <input type="text" id="command-input" autofocus autocomplete="off" spellcheck="false" autocapitalize="off">
+      </div>
+    </div>
   </div>
-
-  <div class="center-text">
-    <p>
-    </p>
-  </div>
-<div class="center-ascii">
-  <pre class="door">
-<span class="door-1"> __________</span>
-<span class="door-2">|  __  __  |</span>
-<span class="door-3">| |  ||  | |</span>
-<span class="door-4">| |  ||  | |</span>
-<span class="door-5">| |__||__| |</span>
-<span class="door-6">|  __  __()|</span>
-<span class="door-7">| |  ||  | |</span> <a href="https://proximasan.github.io/parrotzone/">knock knock who's there (￣□￣」)</a>
-<span class="door-8">| |  ||  | |</span>
-<span class="door-9">| |  ||  | |</span>
-<span class="door-10">| |  ||  | |</span>
-<span class="door-11">| |__||__| |</span>
-<span class="door-12">|__________|</span>
-  </pre>
-</div>
-
+  <script src="js/terminal.js"></script>
 </body>
 </html>
