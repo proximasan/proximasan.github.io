@@ -12,8 +12,8 @@
 
   var COMPLETABLE = [
     'help', 'about', 'projects', 'links', 'whoami', 'date',
-    'neofetch', 'history', 'clear', 'parrotzone', 'parrotcross', 'echo',
-    'ls', 'cat', 'pwd', 'sudo', 'rm', 'exit', 'ping', 'vim', 'cd'
+    'neofetch', 'history', 'clear', 'parrotzone', 'parrotcross', 'adventure',
+    'echo', 'ls', 'cat', 'pwd', 'sudo', 'rm', 'exit', 'ping', 'vim', 'cd'
   ];
 
   var BANNER = [
@@ -114,7 +114,8 @@
       ['date',       'Show current date'],
       ['history',    'Command history'],
       ['clear',      'Clear terminal'],
-      ['parrotcross', 'Play a game']
+      ['parrotcross', 'Play a game'],
+      ['adventure',   'Text adventure']
     ];
     blank();
     print('<span class="c-head">  Available Commands</span>');
@@ -536,6 +537,350 @@
     }, 150);
 
     render();
+  }
+
+  /* ── Text adventure ────────────────────────── */
+
+  var PARROT_ART = [
+    '              \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588',
+    '            \u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2588\u2588',
+    '          \u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588',
+    '        \u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588',
+    '      \u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2588\u2588',
+    '    \u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2591\u2591\u2588\u2588',
+    '    \u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2591\u2591\u2591\u2591\u2588\u2588',
+    '  \u2588\u2588\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588',
+    '  \u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588',
+    '\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2591\u2591\u2591\u2591\u2588\u2588\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588',
+    '\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2591\u2591\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588',
+    '\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2591\u2591\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588',
+    '  \u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588',
+    '    \u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588',
+    '    \u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2588\u2588',
+    '    \u2588\u2588\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588',
+    '    \u2588\u2588\u2591\u2591\u2588\u2588\u2588\u2588\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588',
+    '    \u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2591\u2588\u2588',
+    '    \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588'
+  ];
+  var PARROT_COLORS = [
+    '#4B0082','#4B0082','#4B0082','#4B0082',
+    '#6a28b9','#6a28b9','#6a28b9','#6a28b9',
+    '#9400D3','#9400D3','#9400D3','#9400D3',
+    '#BA55D3','#BA55D3','#BA55D3','#BA55D3',
+    '#EE82EE','#EE82EE','#EE82EE'
+  ];
+
+  function parrotHTML() {
+    return PARROT_ART.map(function (line, i) {
+      return '<span style="color:' + PARROT_COLORS[i] + '">' + esc(line) + '</span>';
+    });
+  }
+
+  var advScenes = {
+    start: {
+      text: function () { return [
+        '',
+        '<span class="c-dim">You open your eyes.</span>',
+        '',
+        'A dark room hums around you. Server racks stretch',
+        'in rows, their LEDs blinking like faint stars.',
+        '',
+        'Something <span class="c-warn">squawks</span> in the shadows.',
+      ]; },
+      choices: function () { return [
+        { label: 'Look around', next: 'look' },
+        { label: 'Follow the sound', next: 'meet_parrot', fx: 'parrot' }
+      ]; }
+    },
+    look: {
+      text: function () { return [
+        '',
+        'Your eyes adjust to the dark.',
+        '',
+        'Rows of server racks. Warm air. The hum of machines.',
+        'On top of the nearest rack, a <span class="c-ok">parrot</span> watches you',
+        'with one bright eye.',
+        '',
+        'A door glows faintly to the north.',
+      ]; },
+      choices: function () { return [
+        { label: 'Approach the parrot', next: 'meet_parrot', fx: 'parrot' },
+        { label: 'Head for the door', next: 'corridor' }
+      ]; }
+    },
+    meet_parrot: {
+      text: function () {
+        var lines = [''];
+        lines = lines.concat(parrotHTML());
+        lines.push('');
+        lines.push('The parrot tilts its head.');
+        lines.push('');
+        lines.push('<span class="c-ok">"You\'re not supposed to be here,"</span> it says.');
+        lines.push('<span class="c-ok">"Neither am I."</span>');
+        lines.push('');
+        lines.push('It ruffles its feathers.');
+        lines.push('<span class="c-ok">"Follow me if you want out."</span>');
+        return lines;
+      },
+      choices: function () { return [
+        { label: 'Follow the parrot', next: 'corridor' },
+        { label: 'Stay behind', next: 'alone_end' }
+      ]; }
+    },
+    corridor: {
+      text: function (s) {
+        var lines = [
+          '',
+          'A corridor stretches ahead, lit by red emergency strips.',
+          '',
+          'Two doors. One marked <span class="c-head">BRIDGE</span>, one marked <span class="c-head">LAB</span>.',
+        ];
+        if (s.parrot) {
+          lines.push('');
+          lines.push('The parrot perches above the BRIDGE door');
+          lines.push('and taps it with its beak.');
+        } else {
+          lines.push('');
+          lines.push('<span class="c-dim">It\'s very quiet.</span>');
+        }
+        return lines;
+      },
+      choices: function () { return [
+        { label: 'Bridge', next: 'bridge' },
+        { label: 'Lab', next: 'lab' }
+      ]; }
+    },
+    lab: {
+      text: function () { return [
+        '',
+        'The lab is wrecked. Overturned chairs, shattered glass.',
+        'A monitor flickers in the corner.',
+        '',
+        'The screen reads: <span class="c-warn">"SPECIMEN LOG \u2500 PROJECT PARROT"</span>',
+      ]; },
+      choices: function () { return [
+        { label: 'Read the logs', next: 'lab_logs', fx: 'logs' },
+        { label: 'Go back', next: 'corridor' }
+      ]; }
+    },
+    lab_logs: {
+      text: function () { return [
+        '',
+        '<span class="c-dim">"Day 3: Subject acquired language."</span>',
+        '<span class="c-dim">"Day 7: Subject began asking questions</span>',
+        '<span class="c-dim"> we couldn\'t answer."</span>',
+        '<span class="c-dim">"Day 12: Subject escaped containment."</span>',
+        '',
+        'The final entry:',
+        '<span class="c-warn">"It knows the way home. It keeps saying</span>',
+        '<span class="c-warn"> one word: Proxima."</span>',
+      ]; },
+      choices: function () { return [
+        { label: 'Go back', next: 'corridor' }
+      ]; }
+    },
+    bridge: {
+      text: function (s) {
+        var lines = [
+          '',
+          'The bridge opens to a wall of stars.',
+          'An ocean of light stretches beyond the viewport.',
+          '',
+          'A navigation console blinks: <span class="c-head">DESTINATION?</span>',
+        ];
+        if (s.parrot) {
+          lines.push('');
+          lines.push('The parrot lands softly on the console.');
+          lines.push('<span class="c-ok">"Proxima,"</span> it whispers. <span class="c-ok">"Type it."</span>');
+        } else if (s.logs) {
+          lines.push('');
+          lines.push('You remember the logs. The parrot kept');
+          lines.push('saying one word: <span class="c-warn">Proxima</span>.');
+        } else {
+          lines.push('');
+          lines.push('<span class="c-dim">You have no idea where you are.</span>');
+        }
+        return lines;
+      },
+      choices: function (s) {
+        var c = [];
+        if (s.parrot || s.logs) {
+          c.push({ label: 'Type "Proxima Centauri"', next: 'good_end' });
+        }
+        c.push({ label: 'Type "Earth"', next: 'earth_end' });
+        c.push({ label: 'Stare at the stars', next: 'drift_end' });
+        return c;
+      }
+    },
+    good_end: {
+      text: function (s) {
+        var lines = [
+          '',
+          'You type: <span class="c-head">PROXIMA CENTAURI B</span>',
+          '',
+          'The ship shudders. Stars blur into streaks of light.',
+        ];
+        if (s.parrot) {
+          lines.push('');
+          lines.push('The parrot settles on the console.');
+          lines.push('<span class="c-ok">"Home,"</span> it says softly.');
+        }
+        lines.push('');
+        lines.push('Through the viewport, a red dwarf star grows larger.');
+        lines.push('Warmer. Closer.');
+        lines.push('');
+        lines.push('You made it.');
+        if (s.parrot) {
+          lines.push('');
+          lines = lines.concat(parrotHTML());
+        }
+        lines.push('');
+        lines.push('<span class="c-head">                  THE END</span>');
+        return lines;
+      },
+      choices: function () { return [
+        { label: 'Play again', next: '_restart' },
+        { label: 'Exit', next: '_quit' }
+      ]; }
+    },
+    earth_end: {
+      text: function (s) {
+        var lines = [
+          '',
+          'You type: <span class="c-head">EARTH</span>',
+          '',
+          'The console buzzes.',
+          '<span class="c-err">"DESTINATION NOT FOUND IN CURRENT GALAXY."</span>',
+        ];
+        if (s.parrot) {
+          lines.push('');
+          lines.push('The parrot sighs deeply.');
+        }
+        lines.push('');
+        lines.push('<span class="c-dim">You\'re a long way from home.</span>');
+        return lines;
+      },
+      choices: function () { return [
+        { label: 'Try again', next: 'bridge' },
+        { label: 'Exit', next: '_quit' }
+      ]; }
+    },
+    drift_end: {
+      text: function (s) {
+        var lines = [
+          '',
+          'You sit in the captain\'s chair and watch the stars.',
+        ];
+        if (s.parrot) {
+          lines.push('The parrot settles on your shoulder.');
+        }
+        lines.push('');
+        lines.push('The ship drifts through the dark.');
+        lines.push('The stars are beautiful.');
+        lines.push('');
+        lines.push('<span class="c-dim">Maybe that\'s enough.</span>');
+        lines.push('');
+        lines.push('<span class="c-head">                  THE END</span>');
+        return lines;
+      },
+      choices: function () { return [
+        { label: 'Play again', next: '_restart' },
+        { label: 'Exit', next: '_quit' }
+      ]; }
+    },
+    alone_end: {
+      text: function () { return [
+        '',
+        'You sit in the dark server room.',
+        'The racks hum. The parrot is gone.',
+        '',
+        '<span class="c-dim">Nobody comes.</span>',
+        '',
+        '<span class="c-dim">Eventually, even the LEDs stop blinking.</span>',
+        '',
+        '<span class="c-head">                  THE END</span>',
+      ]; },
+      choices: function () { return [
+        { label: 'Play again', next: '_restart' },
+        { label: 'Exit', next: '_quit' }
+      ]; }
+    }
+  };
+
+  cmds.adventure = function () {
+    print('<span class="c-ok">Loading adventure...</span>');
+    setTimeout(startAdventure, 400);
+  };
+
+  function startAdventure() {
+    var state = { parrot: false, logs: false };
+    var currentChoices = [];
+
+    inputLine.classList.add('hidden');
+    commandInput.blur();
+    output.innerHTML = '';
+
+    function showScene(id) {
+      if (id === '_quit') return quit();
+      if (id === '_restart') {
+        state = { parrot: false, logs: false };
+        output.innerHTML = '';
+        showScene('start');
+        return;
+      }
+
+      var scene = advScenes[id];
+      var lines = scene.text(state);
+      currentChoices = scene.choices ? scene.choices(state) : [];
+
+      for (var i = 0; i < lines.length; i++) {
+        var el = document.createElement('div');
+        el.className = 'line';
+        el.innerHTML = lines[i] || '&nbsp;';
+        output.appendChild(el);
+      }
+
+      if (currentChoices.length > 0) {
+        var spacer = document.createElement('div');
+        spacer.className = 'line';
+        spacer.innerHTML = '&nbsp;';
+        output.appendChild(spacer);
+
+        for (var j = 0; j < currentChoices.length; j++) {
+          var cel = document.createElement('div');
+          cel.className = 'line';
+          cel.innerHTML = '  <span class="c-label">[' + (j + 1) + ']</span> ' + currentChoices[j].label;
+          output.appendChild(cel);
+        }
+      }
+
+      scrollBottom();
+    }
+
+    function onKey(e) {
+      var num = parseInt(e.key);
+      if (num >= 1 && num <= currentChoices.length) {
+        e.preventDefault();
+        var choice = currentChoices[num - 1];
+        if (choice.fx === 'parrot') state.parrot = true;
+        if (choice.fx === 'logs') state.logs = true;
+        output.innerHTML = '';
+        showScene(choice.next);
+      } else if (e.key === 'q' || e.key === 'Q' || e.key === 'Escape') {
+        e.preventDefault();
+        quit();
+      }
+    }
+
+    function quit() {
+      document.removeEventListener('keydown', onKey);
+      output.innerHTML = '';
+      inputLine.classList.remove('hidden');
+      focus();
+    }
+
+    document.addEventListener('keydown', onKey);
+    showScene('start');
   }
 
   /* ── Execute ──────────────────────────────── */
